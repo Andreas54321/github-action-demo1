@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
 jobs:
-  install:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Get code # Step name
@@ -12,7 +12,7 @@ jobs:
         uses: actions/cache@v3
         id: cache
         with:
-          path: ~/.node_modules
+          path: node_modules
           key: deps-node-modules-$${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
