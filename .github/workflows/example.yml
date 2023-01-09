@@ -3,6 +3,22 @@ on:
   workflow_dispatch:
   push:
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code # Step name
+        uses: actions/checkout@v3 # Action
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: node_modules
+          key: deps-node-modules-$${{ hashFiles('**/package-lock.json') }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+      - name: test
+        run: npm run test
   build:
     runs-on: ubuntu-latest
     steps:
@@ -26,3 +42,14 @@ jobs:
           path: | # list of folders
             dist
             package.json
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [test, build]
+    steps:
+      - name: Get artifacts
+        id: myId
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files # artifact name
+      - name: deploy
+        run: echo 'Upload file... ${{ steps.myId.outputs.download-path }}'
