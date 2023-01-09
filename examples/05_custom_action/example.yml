@@ -1,0 +1,41 @@
+name: example flow
+on:
+  workflow_dispatch: # manual trigger
+  push:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code # Step name
+        uses: actions/checkout@v3 # Action
+      - name: Install dependencies
+        uses: "./.github/actions/install"
+      - name: Build
+        run: npm run test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code # Step name
+        uses: actions/checkout@v3 # Action
+      - name: Install dependencies
+        uses: "./.github/actions/install"
+      - name: Build
+        run: npm run build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files # artifact name
+          path: |
+            dist
+            package.json
+  deploy:
+    needs: [test, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get artifacts
+        uses: actions/download-artifact@v3
+        id: myId
+        with:
+          name: dist-files # artifact name
+      - name: Upload
+        run: echo 'Upload file... ${{ steps.myId.outputs.download-path }}'
