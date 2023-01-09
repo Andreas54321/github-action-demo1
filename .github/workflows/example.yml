@@ -1,5 +1,6 @@
 name: example flow
 on:
+  workflow_dispatch:
   push:
 jobs:
   install:
@@ -11,6 +12,8 @@ jobs:
         run: echo 'bye'
   next-job:
     runs-on: ubuntu-latest
+    needs: install
     steps:
       - name: other things
         run: echo 'other'
+        timeout-minutes: 20
