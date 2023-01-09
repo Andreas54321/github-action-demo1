@@ -1,0 +1,16 @@
+name: example flow
+on:
+  push:
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: hello world
+        run: echo 'Hello'
+      - name: byee
+        run: echo 'bye'
+  next-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: other things
+        run: echo 'other'
