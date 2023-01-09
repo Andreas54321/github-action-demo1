@@ -8,9 +8,16 @@ jobs:
     steps:
       - name: Get code # Step name
         uses: actions/checkout@v3 # Action
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: ~/.node_modules
+          key: deps-node-modules-$${{ hashFiles('**/package-lock.json') }}
       - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
-      - name: other things
+      - name: build
         run: npm run build
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
