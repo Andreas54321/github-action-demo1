@@ -1,0 +1,17 @@
+name: Install dependencies
+description: Do the npm install
+runs:
+  using: composite
+  steps:
+    - name: Get code # Step name
+      uses: actions/checkout@v3 # Action
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      id: cache
+      with:
+        path: node_modules
+        key: deps-node-modules-$${{ hashFiles('**/package-lock.json') }}
+    - name: Install dependencies
+      shell: bash
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: npm ci
